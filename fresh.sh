@@ -1,43 +1,57 @@
 #!/bin/sh
 
-echo "Setting up your Mac..."
+echo "⚙️ Setting up your Mac..."
 
-# Check for Oh My Zsh and install if we don't have it
-if test ! $(which omz); then
+# 🌀 Install Oh My Zsh if missing
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "🔧 Installing Oh My Zsh..."
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+else
+  echo "✅ Oh My Zsh already installed."
 fi
 
-# Check for Homebrew and install if we don't have it
-if test ! $(which brew); then
+# 🍺 Install Homebrew if missing
+if ! command -v brew &> /dev/null; then
+  echo "🔧 Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# Install Powerlevel10k if not already installed
+# 🎨 Install Powerlevel10k theme
 if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
-  echo "🔧 Installing Powerlevel10k..."
+  echo "🎨 Installing Powerlevel10k..."
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
     ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 fi
 
-# Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
-rm -rf $HOME/.zshrc
-ln -sw $HOME/.dotfiles/.zshrc $HOME/.zshrc
+# 💡 Install zsh-autosuggestions plugin
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+  echo "💡 Installing zsh-autosuggestions..."
+  git clone https://github.com/zsh-users/zsh-autosuggestions \
+    ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
 
-# Update Homebrew recipes
+# 🖍️ Install zsh-syntax-highlighting plugin
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+  echo "🖍️ Installing zsh-syntax-highlighting..."
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+    ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+# 🔗 Symlink Zsh config
+rm -f "$HOME/.zshrc"
+ln -s "$HOME/.dotfiles/.zshrc" "$HOME/.zshrc"
+
+# 🍻 Update and install Homebrew bundle
 brew update
-
-# Install all our dependencies with bundle (See Brewfile)
-brew tap homebrew/bundle
 brew bundle --file ./Brewfile
 
-# Set default MySQL root password and auth type
-mysql -u root -e "ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+# 🧷 Symlink Mackup config
+ln -sf "$HOME/.dotfiles/.mackup.cfg" "$HOME/.mackup.cfg"
 
-# Symlink the Mackup config file to the home directory
-ln -s ./.mackup.cfg $HOME/.mackup.cfg
-
-# Set macOS preferences - we will run this last because this will reload the shell
+# 🍎 Set macOS preferences (may require reboot)
+echo "🧰 Applying macOS settings..."
 source ./.macos
+
+echo "✅ Done! Restart your terminal to apply Zsh and macOS changes."
