@@ -1,9 +1,3 @@
-# Taps
-tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-versions'
-tap 'homebrew/bundle'
-tap 'homebrew/node'
-tap 'homebrew/python'
 
 # Binaries
 brew 'awscli'
@@ -33,7 +27,6 @@ brew 'yarn'
 
 # Apps
 cask '1password'
-brew '1password-cli'
 cask 'docker'
 cask 'figma'
 cask 'github'
@@ -64,8 +57,4 @@ cask 'font-source-sans-pro'
 cask 'font-source-serif-pro'
 
 # Mac App Store
-mas 'Byword', id: 420212497
-mas 'Giphy Capture', id: 668208984
-mas 'Speedtest', id: 1153157709
-mas 'Spring', id: 1508706541
 mas 'Remarkable Desktop', id:1276493162
