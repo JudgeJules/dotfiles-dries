@@ -15,6 +15,13 @@ if test ! $(which brew); then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Install Powerlevel10k if not already installed
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
+  echo "🔧 Installing Powerlevel10k..."
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+    ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
+
 # Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
 rm -rf $HOME/.zshrc
 ln -sw $HOME/.dotfiles/.zshrc $HOME/.zshrc
